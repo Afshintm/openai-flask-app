@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAI Chat Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Chat with AI</h1>
+        <div class="chat-container">
+            <div id="chat-messages"></div>
+            <form id="chat-form">
+                <textarea id="prompt" placeholder="Type your message..."></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#chat-form').on('submit', function(e) {
+                e.preventDefault();
+
+                const prompt = $('#prompt').val();
+                if (!prompt) return;
+
+                // Add user message
+                $('#chat-messages').append(`
+                    <div class="message user-message">
+                        <p>${prompt}</p>
+                    </div>
+                `);
+
+                $.ajax({
+                    url: '/',
+                    method: 'POST',
+                    data: { prompt: prompt },
+                    success: function(response) {
+                        $('#chat-messages').append(`
+                            <div class="message ai-message">
+                                <p>${response.response}</p>
+                            </div>
+                        `);
+                    },
+                    error: function(error) {
+                        $('#chat-messages').append(`
+                            <div class="message error-message">
+                                <p>Error: ${error.responseJSON?.error || 'Something went wrong'}</p>
+                            </div>
+                        `);
+                    }
+                });
+
+                $('#prompt').val('');
+            });
+        });
+    </script>
+</body>
+</html>

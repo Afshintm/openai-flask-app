@@ -1,0 +1,13 @@
+version: '4.1'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5001:5001"  # Using port 5001 as we changed it earlier
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - FLASK_ENV=development
